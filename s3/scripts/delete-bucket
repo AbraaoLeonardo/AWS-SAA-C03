@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -z "$1" ]; then
+    echo "Plese, specify the bucket you want to delete"
+    exit 1
+fi
+
+BUCKET_NAME=$1
+
+aws s3api delete-bucket \
+--bucket "${BUCKET_NAME}"

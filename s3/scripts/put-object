@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+##############################################
+# Created by abraao
+#
+# With a directory and the bucket name, put the data on the bucket
+#
+# How to use? ./put-object file-or-directory bucket name
+#
+###############################################
+
+if [ -z $1 ]; then
+echo "Please, specify the files to send"
+exit 1
+fi 
+
+if [ -z $2 ]; then
+echo "Please, in type the bucket you want to upload the files"
+exit 1
+fi
+
+BUCKET_PATH=s3://$2
+FILE=$1
+
+aws s3 cp --recursive "${FILE}" "${BUCKET_PATH}"
