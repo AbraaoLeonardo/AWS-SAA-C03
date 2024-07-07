@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+if [ -z $1 ]; then
+    CIDR="10.0.0.0/16"
+else
+    CIDR="$1"
+fi
+
+echo "Creating a VPC 1"
+aws ec2 create-vpc \
+--cidr-block "${CIDR}" \
+--region us-east-1 \
+--tag-specifications 'ResourceType=vpc,Tags=[{Key=Env,Value=Dev}]' \
+--query "Vpc.VpcId" \
+--output text
+exit 0

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Detach Internet Gateway
+aws ec2 detach-internet-gateway --vpc-id $VPC_ID --internet-gateway-id $IG_ID
+
+# Delete Internet Gateway
+aws ec2 delete-internet-gateway --internet-gateway-id $IG_ID
+
+# Delete Subnet
+aws ec2 delete-subnet --subnet-id "${SUBNET_ID}"
+
+# Delete Route Table
+aws ec2 delete-route-table --route-table-id ${ROUTE_TABLE_ID}
+
+# Delete VPC
+aws ec2 delete-vpc --vpc-id "${VPC_ID}"

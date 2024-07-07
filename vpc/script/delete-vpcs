@@ -1,0 +1,80 @@
+#!/bin/env bash
+######################################################
+# How to use
+# If you pass a valuer, the code will exclude this VPC
+# But if you don't pass a parameter, the code will delete all VPC
+# Example: ./delete-vpcs
+# Example 2: ./delete-vpcs 
+######################################################
+
+
+#!/bin/bash
+
+delete_a_single_vpc(){
+    VPC_ID="$1"
+    aws ec2 delete-vpc --vpc-id $VPC_ID
+    echo "Vpc ${VPC_ID} deleted with success"
+}
+
+delete_all_VPCs(){
+
+    echo "You dont pass any vpc id, you will delete all VPCs."
+    read -rp "Do you want to proceed? (yes/no): " answer
+    answer=${answer,,}
+
+    if [[ "$answer" == "yes" ]]; then
+        echo "Proceeding with the operation..."
+        VPC_IDS=$(aws ec2 describe-vpcs --query 'Vpc.VpcId' --output text)
+    elif [[ "$answer" == "no" ]]; then
+        echo "Operation cancelled."
+        exit 0
+    else
+        echo "Invalid input. Please enter 'yes' or 'no'."
+        exit 1
+    fi
+
+    if [ "$VPC_IDS"=="None" ]; then
+        echo "${VPC_IDS}"
+        echo "You don't have any VPC runnig"
+        exit 1
+    else
+        echo "${VPC_IDS}"
+        for VPC_ID in $VPC_IDS; do
+            echo "Deleting VPC with ID: ${VPC_ID}"
+            aws ec2 delete-vpc --vpc-id "${VPC_ID}"
+        done
+    fi
+}
+
+VPC_TO_DELETE=""
+OPTIONS=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -i | --vpc-id)
+        VPC_TO_DELETE="$2"
+        shift 2
+        ;;
+        -a | --all)
+        OPTIONS=all
+        shift
+        ;;
+        *)
+        echo "Invalid argument"
+        exit 1
+        ;;
+    esac
+done
+
+if [[ "$OPTIONS" == "all" ]]; then
+    delete_all_VPCs
+elif [[ -n "$VPC_TO_DELETE" ]]; then
+    delete_a_single_vpc "${VPC_TO_DELETE}"
+else
+    echo "Parameter invalid"
+    exit 1
+fi
+
+
+
+# Iterate through each VPC ID and delete it

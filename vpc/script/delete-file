@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Function to delete a single file in /test directory
+delete_single_file() {
+    file_name="$1"
+    if [[ -f "./test/$file_name" ]]; then
+        rm "./test/$file_name"
+        echo "Deleted file ./test/$file_name"
+    else
+        echo "File ./test/$file_name does not exist."
+    fi
+}
+
+# Function to delete all files in /test directory
+delete_all_files() {
+    num_files=$(ls -1 ./test/ | wc -l)
+    if [[ $num_files -gt 0 ]]; then
+        rm ./test/*
+        echo "Deleted all files in /test directory."
+    else
+        echo "No files found in /test directory."
+    fi
+}
+
+file_to_delete=""
+option=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -f | --file)
+            file_to_delete="$2"
+            shift 2
+            ;;
+        -a | --all)
+            option="all"
+            shift
+            ;;
+        *)
+            echo "Invalid argument: $1"
+            exit 1
+            ;;
+    esac
+done
+
+if [[ "$option" == "all" ]]; then
+    delete_all_files
+elif [[ -n "$file_to_delete" ]]; then
+    delete_single_file "$file_to_delete"
+else
+    echo "Invalid usage. Please provide either -f or --file for a specific file, or -a or --all to delete all files."
+    exit 1
+fi
+
